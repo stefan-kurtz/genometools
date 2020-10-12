@@ -115,7 +115,14 @@ static GtOPrval parse_options(int *parsed_args,
     gt_str_set(so->indexname, basenameptr);
     gt_free(basenameptr);
   }
-
+#ifdef GT_THREADS_ENABLED
+  if (oprval == GT_OPTION_PARSER_OK &&
+      gt_jobs > 1 && gt_index_options_outlcptab_value(so->idxopts))
+  {
+    gt_error(err,"option -lcp cannot be combined with gt -j");
+    oprval = GT_OPTION_PARSER_REQUESTS_EXIT;
+  }
+#endif
   gt_option_parser_delete(op);
 
   return oprval;
